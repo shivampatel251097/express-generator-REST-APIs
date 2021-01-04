@@ -83,7 +83,7 @@ dishRouter.route('/:dishId')
 
 
 //Endpoints without id for comments
-dishRouter.route('/:dishID/comments')
+dishRouter.route('/:dishId/comments')
 .get((req,res,next)=>{
     Dishes.findById(req.params.dishId)
     .then((dish)=> {
@@ -187,8 +187,6 @@ dishRouter.route('/:dishId/comments/:commentId')
             if(req.body.comment){
                 dish.comments.id(req.params.commentId).comment= req.body.comment;
             }
-            dish.save();
-            dish.comments.push(req.body);
             dish.save()
             .then((dish)=>{
                 res.statusCode = 200;
