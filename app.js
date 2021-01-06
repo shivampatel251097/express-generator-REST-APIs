@@ -48,13 +48,19 @@ function auth(req,res,next){
     err.status = 401;
     return next(err);
   }
-  var auth = Buffer.from(string[authHeader.split(' ')[1],'base64']).split(':');
-
+  // var auth = Buffer.from(string[authHeader.split(' ')[1],'base64']).split(':');
+  var auth = Buffer.from(authHeader.split(' ')[1], 'base64').toString('ascii').split(':');
   // var auth = new Buffer(authHeader.split(' ')[1], 'base64').toString.split(':');
   var username =  auth[0];
   var password =  auth[1];
   if(username ==='admin' && password === 'password'){
     next();
+  }
+  else{
+    var err = new Error('You are not authorized!!');
+    res.setHeader('WWW-Authenticate', 'Basic');
+    err.status = 401;
+    return next(err);
   }
 }
 app.use(auth);
