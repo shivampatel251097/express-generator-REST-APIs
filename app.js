@@ -37,6 +37,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+//Basic Authentication starts here!!
+//Basiscally we authenticate before request comes to the middlwware responsible for routing
 function auth(req,res,next){
   console.log(req.headers);
 
@@ -48,9 +50,9 @@ function auth(req,res,next){
     err.status = 401;
     return next(err);
   }
-  // var auth = Buffer.from(string[authHeader.split(' ')[1],'base64']).split(':');
+
   var auth = Buffer.from(authHeader.split(' ')[1], 'base64').toString('ascii').split(':');
-  // var auth = new Buffer(authHeader.split(' ')[1], 'base64').toString.split(':');
+
   var username =  auth[0];
   var password =  auth[1];
   if(username ==='admin' && password === 'password'){
