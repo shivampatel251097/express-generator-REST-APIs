@@ -50,7 +50,7 @@ function auth(req,res,next){
     err.status = 401;
     return next(err);
   }
-
+//storing onlt part username and password which is written in base64 then decoding it. 
   var auth = Buffer.from(authHeader.split(' ')[1], 'base64').toString('ascii').split(':');
 
   var username =  auth[0];
