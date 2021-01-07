@@ -46,60 +46,44 @@ app.use(session({
   store: new FileStore
 }));
 
+//These endpoints are written above authentication as we dont want them to be authenticated!
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
+
 //Basic Authentication starts here!!
 //Basiscally we authenticate before request comes to the middlwware responsible for routing
+
 function auth(req,res,next){
   // console.log(req.signedCookies.user);
   console.log(req.session);
 
   if(!req.session.user){
-      var authHeader =  req.headers.authorization;
-
-      if(!authHeader){
-        var err = new Error('You are not authorized!!');
-        res.setHeader('WWW-Authenticate', 'Basic');
+        var err = new Error('You are not authenticated!!');
         err.status = 401;
         return next(err);
-      }
-    //storing onlt part username and password which is written in base64 then decoding it. 
-      var auth = Buffer.from(authHeader.split(' ')[1], 'base64').toString('ascii').split(':');
 
-      var username =  auth[0];
-      var password =  auth[1];
-      if(username ==='admin' && password === 'password'){
-        //for sessions
-        // res.cookie('user','admin',{signed:true})
-        req.session.user = 'admin';
-        next();
-      }
-      else{
-        var err = new Error('You are not authorized!!');
-        res.setHeader('WWW-Authenticate', 'Basic');
-        err.status = 401;
-        return next(err);
-      }
+    //storing only part username and password which is written in base64 then decoding it. 
   }
   else{
-    if(req.session.user ==='admin'){
-      next();
-    }
-    else{
-      var err = new Error('You are not authorized!!');
-        err.status = 401;
-        return next(err);
-    }
+        if(req.session.user ==='authenticated'){
+          next();
+        }
+        else{
+          var err = new Error('You are not authenticated!!');
+            err.status = 403;
+            return next(err);
+        }
   }
-
 }
 app.use(auth);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
 app.use('/dishes',dishRouter);
 app.use('/promotions',promoRouter);
 app.use('/leaders',leaderRouter);
+
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
