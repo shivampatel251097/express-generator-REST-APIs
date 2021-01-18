@@ -7,6 +7,7 @@ var session =  require('express-session');
 var FileStore = require('session-file-store')(session);
 var passport = require('passport');
 var authenticate = require('./authenticate');
+var config = require('./config');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -23,7 +24,7 @@ const Leaders = require('./models/leaders');
 const { Buffer } = require('buffer');
 
 
-const url = 'mongodb://localhost:27017/confusion';
+const url = config.mongoUrl;
 const connect = mongoose.connect(url,{ useNewUrlParser: true });
 
 connect.then((db)=>{

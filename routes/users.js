@@ -3,6 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 var User = require('../models/user');
 var passport =  require('passport');
+var authenticate = require('../authenticate');
 
 const router = express.Router();
 router.use(bodyParser.json());
@@ -36,9 +37,14 @@ User.register(new User({username: req.body.username}),
 
 
 router.post('/login',passport.authenticate('local'),(req, res, next) =>{
+
+  //First we are using local pass port authentication then we are generating token after logging in so that now token will
+  //be passed to other requests
+
+  var token = authenticate.getToken({_id: req.user._id});
   res.statusCode = 200;
   res.setHeader('Content-Type','application/json');
-  res.json({success: true, status: 'Successfully Logged in'});
+  res.json({success: true, token:token, status: 'Successfully Logged in'});
 //   if(!req.session.user){
 //     var authHeader =  req.headers.authorization;
 //     if(!authHeader){
